@@ -58,20 +58,33 @@ document.addEventListener('DOMContentLoaded', () => {
         startButton.classList.add('hidden');
         nextButton.classList.remove('hidden');
         questionText.textContent = q.question.text;
-
         choicesList.innerHTML = "";
+
+        //Disable click event once a option is choosen
+        function disableCilckOption(){
+            const allOptions = choicesList.querySelectorAll('li');
+            allOptions.forEach(option =>{
+                option.style.pointerEvents = 'none';
+            })
+        }
 
         for (let i = 0; i < 3; i++) {
             const li = document.createElement('li');
             li.textContent = q.incorrectAnswers[i];
             choicesList.appendChild(li);
+            li.addEventListener('click',(e)=>{
+                li.style.backgroundColor = "red";
+                disableCilckOption();
+            });
         }
         const li = document.createElement('li');
         li.textContent = q.correctAnswer;
         const idx = parseInt(Math.random() * 4);
         choicesList.insertBefore(li, choicesList.children[idx]);
+        li.addEventListener('click',(e)=>{
+            li.style.backgroundColor = "green";
+            disableCilckOption();
+        },{once:true});
     }
-
-
 
 })
