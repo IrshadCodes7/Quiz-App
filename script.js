@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // console.log(getTrivia());
     let quiz;
     let quizIdx = 0;
+    let score = 0;
     async function handleEvent(){
         quiz = await getTrivia();
         console.log(quiz[quizIdx]);
@@ -45,14 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
         renderQuiz(quiz[quizIdx++]);
         if (quizIdx === 10) {
             resultContainer.classList.remove('hidden');
+            scoreDisplay.textContent = `${score} / 10`;
             nextButton.classList.add('hidden');
             questionText.textContent = "";
             choicesList.innerHTML = "";
             quizIdx = 0;
+            score = 0;
         }
     })
 
     // Display quiz data
+    
     function renderQuiz(q) {
         questionContainer.classList.remove('hidden');
         startButton.classList.add('hidden');
@@ -68,23 +72,32 @@ document.addEventListener('DOMContentLoaded', () => {
             })
         }
 
+        // create correct option
+        const correctLi = document.createElement('li');
+        correctLi.textContent = q.correctAnswer;
+
+        correctLi.addEventListener('click',(e)=>{
+            correctLi.style.backgroundColor = "green";
+            score++;
+            clicked = true;
+            disableCilckOption();
+        });
+
+        // Create false options
         for (let i = 0; i < 3; i++) {
             const li = document.createElement('li');
             li.textContent = q.incorrectAnswers[i];
             choicesList.appendChild(li);
             li.addEventListener('click',(e)=>{
                 li.style.backgroundColor = "red";
+                correctLi.style.backgroundColor = "green";
+                clicked =true;
                 disableCilckOption();
             });
         }
-        const li = document.createElement('li');
-        li.textContent = q.correctAnswer;
+        // Append correct answer at random position
         const idx = parseInt(Math.random() * 4);
-        choicesList.insertBefore(li, choicesList.children[idx]);
-        li.addEventListener('click',(e)=>{
-            li.style.backgroundColor = "green";
-            disableCilckOption();
-        },{once:true});
+        choicesList.insertBefore(correctLi, choicesList.children[idx]);
     }
 
 })
